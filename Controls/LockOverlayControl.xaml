@@ -1,0 +1,294 @@
+<UserControl x:Class="Panak.Controls.LockOverlayControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="360" d:DesignWidth="300"
+             Focusable="True"
+             PreviewKeyDown="UserControl_PreviewKeyDown"
+             KeyDown="UserControl_KeyDown"
+             IsVisibleChanged="UserControl_IsVisibleChanged">
+
+    <UserControl.Resources>
+        <!-- Material 3 Expressive & Folder Themed Dynamic Brushes -->
+        <SolidColorBrush x:Key="LockPrimaryBrush" Color="#EA580C"/>
+        <SolidColorBrush x:Key="LockOnPrimaryBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="LockContainerBrush" Color="#28FFFFFF"/>
+        <SolidColorBrush x:Key="LockOnContainerBrush" Color="#F8FAFC"/>
+        <SolidColorBrush x:Key="LockBtnHoverBrush" Color="#40FFFFFF"/>
+        <SolidColorBrush x:Key="LockBtnPressedBrush" Color="#55FFFFFF"/>
+        <SolidColorBrush x:Key="LockBorderBrush" Color="#45FFFFFF"/>
+        <SolidColorBrush x:Key="LockBadgeBgBrush" Color="#22EA580C"/>
+        <SolidColorBrush x:Key="LockTextBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="LockSubtextBrush" Color="#FFFFFF"/>
+
+        <!-- Material 3 Expressive Numpad Key Style -->
+        <Style x:Key="NumpadButtonStyle" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Width" Value="54"/>
+            <Setter Property="Height" Value="52"/>
+            <Setter Property="Margin" Value="5,4"/>
+            <Setter Property="Background" Value="{DynamicResource LockContainerBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource LockOnContainerBrush}"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="18" BorderThickness="0" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="BtnScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource LockBtnHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleX" To="0.93" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleY" To="0.93" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource LockBtnPressedBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material 3 Expressive Action Pill Button Style -->
+        <Style x:Key="M3PillButtonStyle" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Background" Value="{DynamicResource LockContainerBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource LockTextBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="14" Padding="{TemplateBinding Padding}" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="PillScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource LockBtnHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="PillScale" Storyboard.TargetProperty="ScaleX" To="0.94" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="PillScale" Storyboard.TargetProperty="ScaleY" To="0.94" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="PillScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="PillScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource LockBtnPressedBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material 3 Expressive Filled Icon Button Style -->
+        <Style x:Key="M3SubmitButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="38"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Background" Value="{DynamicResource LockPrimaryBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource LockOnPrimaryBrush}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="19" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="SubmitScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="SubmitScale" Storyboard.TargetProperty="ScaleX" To="0.92" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="SubmitScale" Storyboard.TargetProperty="ScaleY" To="0.92" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="SubmitScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="SubmitScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="border" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="RootLockGrid" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <!-- Animated Lock Icon Badge with Dynamic Folder Hue -->
+            <Grid Width="50" Height="50" HorizontalAlignment="Center" Margin="0,0,0,8">
+                <Ellipse Fill="{DynamicResource LockBadgeBgBrush}"/>
+                <TextBlock x:Name="LockIconText" Text="🔒" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+
+            <!-- Prompt Title -->
+            <TextBlock x:Name="LockTitleText" Text="Կողպված է" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource LockTextBrush}" TextAlignment="Center"/>
+            <TextBlock x:Name="LockSubtitleText" Text="Մուտքագրեք գաղտնաբառը կամ կոդը" FontSize="11" Foreground="{DynamicResource LockSubtextBrush}" TextAlignment="Center" Margin="0,2,0,10"/>
+
+            <!-- Error message badge -->
+            <Border x:Name="ErrorBadge" Background="#35FF4444" CornerRadius="10" Padding="12,5" Margin="0,0,0,8" Visibility="Collapsed">
+                <TextBlock x:Name="ErrorText" Text="Սխալ գաղտնաբառ կամ կոդ" FontSize="11" Foreground="#FF6B6B" FontWeight="SemiBold" TextAlignment="Center"/>
+            </Border>
+
+            <!-- 1. PIN Mode View -->
+            <StackPanel x:Name="PinContainer" Visibility="Collapsed" HorizontalAlignment="Center">
+                <!-- PIN Dots Indicator -->
+                <StackPanel x:Name="PinDotsPanel" Orientation="Horizontal" HorizontalAlignment="Center" Height="28" Margin="0,0,0,10" RenderTransformOrigin="0.5,0.5">
+                    <StackPanel.RenderTransform>
+                        <TranslateTransform x:Name="PinDotsTranslate" X="0" Y="0"/>
+                    </StackPanel.RenderTransform>
+                </StackPanel>
+
+                <!-- Numpad Grid (1-9, Backspace, 0, Submit) -->
+                <UniformGrid x:Name="NumpadGrid" Columns="3" HorizontalAlignment="Center">
+                    <Button x:Name="PinBtn1" Style="{StaticResource NumpadButtonStyle}" Content="1" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtn2" Style="{StaticResource NumpadButtonStyle}" Content="2" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtn3" Style="{StaticResource NumpadButtonStyle}" Content="3" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtn4" Style="{StaticResource NumpadButtonStyle}" Content="4" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtn5" Style="{StaticResource NumpadButtonStyle}" Content="5" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtn6" Style="{StaticResource NumpadButtonStyle}" Content="6" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtn7" Style="{StaticResource NumpadButtonStyle}" Content="7" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtn8" Style="{StaticResource NumpadButtonStyle}" Content="8" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtn9" Style="{StaticResource NumpadButtonStyle}" Content="9" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinBtnBack" Style="{StaticResource NumpadButtonStyle}" Content="⌫" FontSize="15" Click="PinBackspace_Click"/>
+                    <Button x:Name="PinBtn0" Style="{StaticResource NumpadButtonStyle}" Content="0" Click="NumpadBtn_Click"/>
+                    <Button x:Name="PinSubmitBtn" Style="{StaticResource NumpadButtonStyle}" Content="➔" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource LockPrimaryBrush}" Click="PinSubmit_Click"/>
+                </UniformGrid>
+                <Button Style="{StaticResource M3PillButtonStyle}" Content="Մաքրել" HorizontalAlignment="Center" Margin="0,8,0,0" Click="PinClear_Click"/>
+            </StackPanel>
+
+            <!-- 2. Pattern Mode View (Drag-to-draw 3x3 dot matrix) -->
+            <StackPanel x:Name="PatternContainer" Visibility="Collapsed" HorizontalAlignment="Center">
+                <TextBlock x:Name="PatternInstructionsText" Text="Քաշեք մկնիկով՝ նախշը միացնելու համար" FontSize="11" Foreground="{DynamicResource LockSubtextBrush}" TextAlignment="Center" Margin="0,0,0,8"/>
+                <Border Background="{DynamicResource LockContainerBrush}" CornerRadius="20" Padding="12" HorizontalAlignment="Center">
+                    <Canvas x:Name="PatternCanvas" Width="180" Height="180" Background="Transparent" ClipToBounds="False"
+                            PreviewMouseDown="PatternCanvas_MouseDown"
+                            PreviewMouseMove="PatternCanvas_MouseMove"
+                            PreviewMouseUp="PatternCanvas_MouseUp"
+                            MouseLeave="PatternCanvas_MouseLeave"/>
+                </Border>
+                <Button x:Name="PatternClearBtn" Style="{StaticResource M3PillButtonStyle}" Content="Մաքրել նախշը" HorizontalAlignment="Center" Margin="0,10,0,0" Click="PatternClear_Click"/>
+            </StackPanel>
+
+            <!-- 3. Password Mode View -->
+            <StackPanel x:Name="PasswordContainer" Visibility="Collapsed" Width="230" HorizontalAlignment="Center">
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="PasswordInputContainer" CornerRadius="16" Background="{DynamicResource LockContainerBrush}" BorderBrush="{DynamicResource LockBorderBrush}" BorderThickness="1.5">
+                        <PasswordBox x:Name="PasswordInputBox" Height="38" Padding="12,8" Background="Transparent" Foreground="{DynamicResource LockTextBrush}" BorderThickness="0" FontSize="13" VerticalContentAlignment="Center" KeyDown="PasswordInputBox_KeyDown" GotFocus="PasswordInputBox_GotFocus" LostFocus="PasswordInputBox_LostFocus"/>
+                    </Border>
+                    <Button Grid.Column="1" Style="{StaticResource M3SubmitButtonStyle}" Content="➔" Margin="8,0,0,0" Click="PasswordSubmit_Click"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- 4. Cancel button in Remove Lock Mode -->
+            <Button x:Name="RemoveLockCancelBtn" Style="{StaticResource M3PillButtonStyle}" Content="Չեղարկել" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,6,0,0" Click="RemoveLockCancelBtn_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

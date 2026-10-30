@@ -1,0 +1,1201 @@
+<Window x:Class="Panak.Views.FolderPopupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Panak.Controls"
+        Title="Panak"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        WindowStartupLocation="Manual"
+        MinWidth="258"
+        MinHeight="140"
+        MaxWidth="720"
+        MaxHeight="560"
+        SizeToContent="WidthAndHeight"
+        AllowDrop="True"
+        ResizeMode="NoResize"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        PreviewTextInput="Window_PreviewTextInput"
+        PreviewMouseDown="Window_PreviewMouseDown"
+        SizeChanged="Window_SizeChanged">
+
+    <Window.Resources>
+        <!-- Popup Theme Dynamic Brushes -->
+        <SolidColorBrush x:Key="PopupTextBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PopupSubtextBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PopupHeaderBtnBg" Color="#25FFFFFF"/>
+        <SolidColorBrush x:Key="PopupHeaderBtnFg" Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="PopupItemBadgeBg" Color="#25FFFFFF"/>
+        <SolidColorBrush x:Key="PopupItemBadgeFg" Color="#CBD5E1"/>
+        <SolidColorBrush x:Key="PopupItemHoverBrush" Color="#35FFFFFF"/>
+
+        <!-- Glass/Acrylic Header Button Style (Material 3 Expressive Tonal Pill) -->
+        <Style x:Key="HeaderButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource PopupHeaderBtnBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PopupHeaderBtnFg}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="7,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="12" Padding="{TemplateBinding Padding}" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="BtnScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleX" To="0.93" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleY" To="0.93" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="border" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Dropdown Menu Item Style -->
+        <Style x:Key="PopupDropdownItemStyle" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource PopupItemHoverBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Material 3 & Dynamic Shape/Theme Brushes (Default to warm peach seed ~26°) -->
+        <SolidColorBrush x:Key="M3PrimaryBrush" Color="#7A5427"/>
+        <SolidColorBrush x:Key="M3OnPrimaryBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="ShapeCapsuleBgBrush" Color="#FFF5EC"/>
+        <SolidColorBrush x:Key="ShapeUnselectedBgBrush" Color="#FCDDC5"/>
+        <SolidColorBrush x:Key="ShapeSelectedBgBrush" Color="#EA580C"/>
+        <SolidColorBrush x:Key="ShapeUnselectedPathBrush" Color="#7A5427"/>
+        <SolidColorBrush x:Key="ShapeSelectedPathBrush" Color="#FFFFFF"/>
+        <LinearGradientBrush x:Key="OpacityTrackBrush" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#25FFFFFF" Offset="0.0"/>
+            <GradientStop Color="#D07A5427" Offset="1.0"/>
+        </LinearGradientBrush>
+
+        <!-- Color Swatch Radio Style: Justified circular color indicators -->
+        <Style x:Key="ColorSwatchStyle" TargetType="RadioButton">
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid x:Name="SwatchRoot">
+                            <Ellipse x:Name="OuterRing" Stroke="White" StrokeThickness="2" Visibility="Collapsed" Margin="-3"/>
+                            <Ellipse Fill="{TemplateBinding Background}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="OuterRing" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="SwatchRoot" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material 3 Expressive CheckBox Style -->
+        <Style x:Key="M3ExpressiveCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#F8FAFC"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Ellipse x:Name="Halo" Width="26" Height="26" Fill="#20FFFFFF" Visibility="Collapsed"/>
+                                <Border x:Name="BoxBorder" Width="19" Height="19" CornerRadius="6"
+                                        BorderThickness="2" BorderBrush="#75FFFFFF" Background="#15000000"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border x:Name="CheckedBox" Width="19" Height="19" CornerRadius="6"
+                                        Background="{DynamicResource M3PrimaryBrush}" Visibility="Collapsed"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Path x:Name="CheckMark"
+                                          Data="M 4,9.5 L 8,13.5 L 15,6.5"
+                                          Stroke="White" StrokeThickness="2.2"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                            <ContentPresenter Grid.Column="1"
+                                              Margin="7,0,0,0"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="BoxBorder" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="CheckedBox" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Halo" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="BoxBorder" Property="BorderBrush" Value="#A5FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material 3 Expressive Toggle Switch Style with Smooth Sliding Animation -->
+        <Style x:Key="M3ExpressiveToggleSwitchStyle" TargetType="CheckBox">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#F8FAFC"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Switch Track (44x24 pill) -->
+                            <Border x:Name="SwitchTrack" Grid.Column="0" Width="44" Height="24" CornerRadius="12"
+                                    BorderThickness="2" BorderBrush="#55FFFFFF" Background="#20000000"
+                                    HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <!-- Switch Thumb Container -->
+                                <Canvas Width="40" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="False">
+                                    <!-- Animated Thumb -->
+                                    <Border x:Name="SwitchThumb" Width="14" Height="14" CornerRadius="7"
+                                            Background="#CBD5E1" Canvas.Left="2" Canvas.Top="3"/>
+                                    <!-- Checked Icon: subtle vector check inside thumb -->
+                                    <Path x:Name="CheckIcon" Data="M 1,4 L 3.5,6.5 L 7.5,1.5"
+                                          Stroke="{DynamicResource M3PrimaryBrush}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                          Canvas.Left="26" Canvas.Top="6" Opacity="0"/>
+                                </Canvas>
+                            </Border>
+                            <!-- Label Content -->
+                            <ContentPresenter Grid.Column="1"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              VerticalAlignment="Center"
+                                              Margin="10,0,0,0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="(Canvas.Left)" To="21" Duration="0:0:0.22">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="Width" To="18" Duration="0:0:0.22">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="Height" To="18" Duration="0:0:0.22">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="(Canvas.Top)" To="1" Duration="0:0:0.22"/>
+                                            <DoubleAnimation Storyboard.TargetName="CheckIcon" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.18"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="(Canvas.Left)" To="2" Duration="0:0:0.22">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="Width" To="14" Duration="0:0:0.22">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="Height" To="14" Duration="0:0:0.22">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="SwitchThumb" Storyboard.TargetProperty="(Canvas.Top)" To="3" Duration="0:0:0.22"/>
+                                            <DoubleAnimation Storyboard.TargetName="CheckIcon" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="SwitchTrack" Property="Background" Value="{DynamicResource M3PrimaryBrush}"/>
+                                <Setter TargetName="SwitchTrack" Property="BorderThickness" Value="0"/>
+                                <Setter TargetName="SwitchThumb" Property="Background" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="SwitchTrack" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material 3 Expressive TextBox Style -->
+        <Style x:Key="M3ExpressiveTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#25000000"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="CaretBrush" Value="#FFFFFF"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Padding" Value="12,7"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="BorderBrush" Value="#40FFFFFF"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Container"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="14">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Container" Property="BorderBrush" Value="#70FFFFFF"/>
+                                <Setter TargetName="Container" Property="Background" Value="#30000000"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Container" Property="BorderBrush" Value="{DynamicResource M3PrimaryBrush}"/>
+                                <Setter TargetName="Container" Property="BorderThickness" Value="2"/>
+                                <Setter TargetName="Container" Property="Background" Value="#35000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material 3 Expressive Filled Icon Button Style with squash feedback -->
+        <Style x:Key="M3ExpressiveFilledIconButton" TargetType="Button">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Background" Value="{DynamicResource M3PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="16"
+                                RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="BtnScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleX" To="0.94" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleY" To="0.94" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Setup Lock Method Tab Style -->
+        <Style x:Key="SetupMethodTabStyle" TargetType="RadioButton">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{DynamicResource PopupSubtextBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="TabBorder" Background="Transparent" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="{DynamicResource M3PrimaryBrush}"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TabBorder" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Dynamic Hue Brush & Pastel Hue Slider Style -->
+        <SolidColorBrush x:Key="CurrentHueThumbBrush" Color="#FCDDC5"/>
+
+        <Style x:Key="PastelHueThumbStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid x:Name="HueThumbRoot" Width="20" Height="20" RenderTransformOrigin="0.5,0.5">
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="ThumbScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Grid.RenderTransform>
+                            <Ellipse Fill="#FFFFFF"/>
+                            <Ellipse Width="10" Height="10" Fill="{DynamicResource CurrentHueThumbBrush}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleX" To="1.15" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleY" To="1.15" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PastelHueSliderStyle" TargetType="{x:Type Slider}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsMoveToPointEnabled" Value="True"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                            <!-- Rainbow Pastel Spectrum Track Background -->
+                            <Border Height="12" CornerRadius="6" BorderThickness="1" BorderBrush="#35FFFFFF" Margin="0" HorizontalAlignment="Stretch">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#FCC5C5" Offset="0.0"/>
+                                        <GradientStop Color="#FCDDC5" Offset="0.073"/>
+                                        <GradientStop Color="#FCFCC5" Offset="0.166"/>
+                                        <GradientStop Color="#DFFCC5" Offset="0.25"/>
+                                        <GradientStop Color="#C5FCC5" Offset="0.333"/>
+                                        <GradientStop Color="#C5FCDD" Offset="0.416"/>
+                                        <GradientStop Color="#C5FCFC" Offset="0.5"/>
+                                        <GradientStop Color="#C5DDFC" Offset="0.583"/>
+                                        <GradientStop Color="#C5C5FC" Offset="0.666"/>
+                                        <GradientStop Color="#DDC5FC" Offset="0.75"/>
+                                        <GradientStop Color="#FCC5FC" Offset="0.833"/>
+                                        <GradientStop Color="#FCC5DD" Offset="0.916"/>
+                                        <GradientStop Color="#FCC5C5" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                            <!-- Track with Thumb -->
+                            <Track x:Name="PART_Track">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Opacity="0" Focusable="False"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Opacity="0" Focusable="False"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource PastelHueThumbStyle}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Opacity Slider Styles -->
+        <Style x:Key="PastelOpacityThumbStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid x:Name="OpacityThumbRoot" Width="20" Height="20" RenderTransformOrigin="0.5,0.5">
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="ThumbScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Grid.RenderTransform>
+                            <Ellipse Fill="#FFFFFF"/>
+                            <Ellipse Width="10" Height="10" Fill="{DynamicResource M3PrimaryBrush}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleX" To="1.15" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleY" To="1.15" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="OpacitySliderStyle" TargetType="{x:Type Slider}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsMoveToPointEnabled" Value="True"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                            <!-- Opacity Gradient Track Background -->
+                            <Border Height="12" CornerRadius="6" BorderThickness="1" BorderBrush="#35FFFFFF" Margin="0" Background="{DynamicResource OpacityTrackBrush}" HorizontalAlignment="Stretch"/>
+                            <!-- Track with Thumb -->
+                            <Track x:Name="PART_Track">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Opacity="0" Focusable="False"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Opacity="0" Focusable="False"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource PastelOpacityThumbStyle}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 5 Shape Geometries -->
+        <StreamGeometry x:Key="GeomCircle">M 12,1 A 11,11 0 1 1 11.99,1 Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomSquircle">M 7,1 L 17,1 A 6,6 0 0 1 23,7 L 23,17 A 6,6 0 0 1 17,23 L 7,23 A 6,6 0 0 1 1,17 L 1,7 A 6,6 0 0 1 7,1 Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomStar">M59.2054 1.00063C76.0771 -4.17958 91.8739 11.6172 86.6937 28.4889L83.9608 37.3899C82.6688 41.5978 82.6688 46.0965 83.9608 50.3044L86.6937 59.2054C91.8739 76.0771 76.0771 91.8739 59.2054 86.6937L50.3044 83.9608C46.0965 82.6688 41.5978 82.6688 37.3899 83.9608L28.4889 86.6937C11.6172 91.8739 -4.17958 76.0771 1.00063 59.2054L3.73355 50.3044C5.02553 46.0965 5.02553 41.5978 3.73355 37.3899L1.00063 28.4889C-4.17958 11.6172 11.6172 -4.17958 28.4889 1.00063L37.3899 3.73355C41.5978 5.02553 46.0965 5.02553 50.3044 3.73355L59.2054 1.00063Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomClover">M59.2054 1.00063C76.0771 -4.17958 91.8739 11.6172 86.6937 28.4889L83.9608 37.3899C82.6688 41.5978 82.6688 46.0965 83.9608 50.3044L86.6937 59.2054C91.8739 76.0771 76.0771 91.8739 59.2054 86.6937L50.3044 83.9608C46.0965 82.6688 41.5978 82.6688 37.3899 83.9608L28.4889 86.6937C11.6172 91.8739 -4.17958 76.0771 1.00063 59.2054L3.73355 50.3044C5.02553 46.0965 5.02553 41.5978 3.73355 37.3899L1.00063 28.4889C-4.17958 11.6172 11.6172 -4.17958 28.4889 1.00063L37.3899 3.73355C41.5978 5.02553 46.0965 5.02553 50.3044 3.73355L59.2054 1.00063Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomScallop">M 12.00,0.80 Q 14.54,2.53 17.60,2.30 Q 18.93,5.07 21.70,6.40 Q 21.47,9.46 23.20,12.00 Q 21.47,14.54 21.70,17.60 Q 18.93,18.93 17.60,21.70 Q 14.54,21.47 12.00,23.20 Q 9.46,21.47 6.40,21.70 Q 5.07,18.93 2.30,17.60 Q 2.53,14.54 0.80,12.00 Q 2.53,9.46 2.30,6.40 Q 5.07,5.07 6.40,2.30 Q 9.46,2.53 12.00,0.80 Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomArch">M 1,12 A 11,11 0 0 1 23,12 L 23,19 A 4,4 0 0 1 19,23 L 5,23 A 4,4 0 0 1 1,19 Z</StreamGeometry>
+
+        <!-- Android 5-Shape Selector Radio Style: Bare silhouette on capsule pill track -->
+        <Style x:Key="ShapeSelectorRadioStyle" TargetType="RadioButton">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid x:Name="RootGrid" Background="Transparent" Width="36" Height="36" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <!-- Shape silhouette path -->
+                            <Path x:Name="ShapePath" Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Stretch="Uniform" Width="19" Height="19" Fill="{DynamicResource ShapeUnselectedPathBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="ShapePath" Property="Fill" Value="{DynamicResource ShapeSelectedPathBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RootGrid" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Breadcrumb Link Button Style -->
+        <Style x:Key="BreadcrumbButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="FontSize" Value="11.5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="Transparent" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource PopupHeaderBtnBg}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PopupTextBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modern Sleek ScrollBar Style -->
+        <SolidColorBrush x:Key="PanakScrollBarThumbBrush" Color="#600078D4"/>
+        <SolidColorBrush x:Key="PanakScrollBarThumbHoverBrush" Color="#990078D4"/>
+
+        <Style x:Key="PanakScrollThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="ThumbBorder"
+                                CornerRadius="2.5"
+                                Background="{DynamicResource PanakScrollBarThumbBrush}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Margin="1,0,1,0"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource PanakScrollBarThumbHoverBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PanakScrollBarStyle" TargetType="{x:Type ScrollBar}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Width" Value="5"/>
+            <Setter Property="MinWidth" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" Opacity="0" Focusable="False"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource PanakScrollThumb}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}" Opacity="0" Focusable="False"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PanakScrollViewerStyle" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid>
+                            <ScrollContentPresenter CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar"
+                                       Style="{StaticResource PanakScrollBarStyle}"
+                                       Orientation="Vertical"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Stretch"
+                                       Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Minimum="0"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="PanakItemDataTemplate">
+            <Border x:Name="ItemBorder" Width="68" Height="90" CornerRadius="12" Background="Transparent" Margin="5" Padding="2,3" Cursor="Hand"
+                    ToolTip="{Binding DisplayName}"
+                    MouseLeftButtonDown="Item_MouseLeftButtonDown"
+                    MouseRightButtonDown="Item_MouseRightButtonDown"
+                    MouseMove="Item_MouseMove">
+                 <Border.ContextMenu>
+                    <ContextMenu Opened="ContextMenu_Opened">
+                        <MenuItem Header="Բացել" Click="MenuItemOpen_Click"/>
+                        <MenuItem x:Name="MenuItemOpenInExplorer" Header="Բացել Explorer-ում" Click="MenuItemOpenInExplorer_Click"/>
+                        <MenuItem x:Name="MenuItemUnpackFolder" Header="Ապահավաքել Panak-ը" Click="MenuItemUnpack_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Հանել պանակից" Click="MenuItemRemove_Click"/>
+                        <MenuItem Header="Ջնջել" Click="MenuItemDelete_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Հատկություններ" Click="MenuItemProperties_Click"/>
+                    </ContextMenu>
+                </Border.ContextMenu>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="66">
+                    <!-- Icon -->
+                    <Grid Width="47" Height="47" HorizontalAlignment="Center">
+                        <Image Source="{Binding IconSource}" Width="43" Height="43" HorizontalAlignment="Center" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Grid>
+                    <!-- Title -->
+                    <controls:VerticalMarqueeTextBlock Margin="0,3,0,0" Text="{Binding DisplayName}" IsHovered="{Binding IsMouseOver, ElementName=ItemBorder}" FontSize="11" Foreground="{DynamicResource PopupTextBrush}" Width="66" Height="34"/>
+                </StackPanel>
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger Property="Border.IsMouseOver" Value="True">
+                    <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource PopupItemHoverBrush}"/>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid x:Name="RootContainer" Margin="0" RenderTransformOrigin="0.5,0.5">
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform x:Name="PopupScale" ScaleX="1" ScaleY="1"/>
+                <TranslateTransform x:Name="PopupTranslate" X="0" Y="0"/>
+            </TransformGroup>
+        </Grid.RenderTransform>
+
+        <!-- Main Card Surface with 2x Rounded Corners (28px) & Android Frosted Glass -->
+        <Border x:Name="CardBorder" CornerRadius="28" Background="#01000000" BorderThickness="0" BorderBrush="Transparent" Margin="0">
+            <Border x:Name="InnerClippingBorder" CornerRadius="28" SizeChanged="InnerClippingBorder_SizeChanged">
+                <Border.Clip>
+                    <RectangleGeometry x:Name="CardClipGeometry" RadiusX="28" RadiusY="28"/>
+                </Border.Clip>
+                <Grid>
+                    <!-- Background Canvas for Blurred Screen: Canvas has 0 DesiredSize so it NEVER inflates Window size -->
+                    <Canvas IsHitTestVisible="False">
+                        <Image x:Name="PopupBlurImage" Stretch="Fill" RenderOptions.BitmapScalingMode="LowQuality">
+                            <Image.Effect>
+                                <BlurEffect x:Name="PopupBlurEffect" Radius="28" KernelType="Gaussian" RenderingBias="Performance"/>
+                            </Image.Effect>
+                        </Image>
+                    </Canvas>
+
+                    <!-- Frosted Glass Dark Tint Overlay -->
+                    <Border x:Name="FrostedTintLayer" CornerRadius="28" Background="#C216161D"/>
+
+                    <!-- Background Accent Tint -->
+                    <Border x:Name="TintLayer" CornerRadius="28" Background="#180078D4" Opacity="1.0"/>
+
+                    <Grid x:Name="PopupMainContentGrid" Margin="12,12,12,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- Row 0: Header -->
+                            <RowDefinition Height="Auto"/> <!-- Row 1: Breadcrumbs Bar -->
+                            <RowDefinition Height="Auto"/> <!-- Row 2: Edit Flyout (collapsible) -->
+                            <RowDefinition Height="*"/>    <!-- Row 3: Items Grid / Empty State -->
+                            <RowDefinition Height="Auto"/> <!-- Row 4: Pager Footer (Slider mode) -->
+                        </Grid.RowDefinitions>
+
+                        <!-- Header Row (Draggable) -->
+                        <Grid x:Name="HeaderRowGrid" Grid.Row="0" Margin="0,0,0,10" Background="Transparent" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Title, Back Button, Inline Edit and Count -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Back Button (visible when inside subfolder) -->
+                                <Button x:Name="BackButton" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,6,0" Visibility="Collapsed" ToolTip="Հետ (Backspace)" Click="BackButton_Click">
+                                    <TextBlock Text="←" FontSize="13" FontWeight="Bold"/>
+                                </Button>
+
+                                <!-- Title with Marquee or Inline Edit Box -->
+                                <Grid x:Name="TitleContainer" VerticalAlignment="Center" Margin="0,0,6,0" MaxWidth="180" ClipToBounds="True" Background="Transparent" Cursor="Hand" ToolTip="Կրկնակի կտտացրեք խմբագրելու համար" MouseLeftButtonDown="FolderTitleText_MouseLeftButtonDown">
+                                    <Canvas x:Name="TitleMarqueeCanvas" Height="22" VerticalAlignment="Center" ClipToBounds="True" Background="Transparent">
+                                        <StackPanel x:Name="TitleMarqueeStack" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <StackPanel.RenderTransform>
+                                                <TranslateTransform x:Name="TitleMarqueeTransform" X="0"/>
+                                            </StackPanel.RenderTransform>
+                                            <TextBlock x:Name="FolderTitleText" Text="Panak Folder" FontSize="15" FontWeight="SemiBold" Foreground="#FFFFFF" VerticalAlignment="Center" Cursor="Hand" ToolTip="Կրկնակի կտտացրեք խմբագրելու համար" MouseLeftButtonDown="FolderTitleText_MouseLeftButtonDown"/>
+                                            <TextBlock x:Name="FolderTitleDuplicateText" Text="" FontSize="15" FontWeight="SemiBold" Foreground="#FFFFFF" VerticalAlignment="Center" Margin="28,0,0,0" Cursor="Hand" Visibility="Collapsed" ToolTip="Կրկնակի կտտացրեք խմբագրելու համար" MouseLeftButtonDown="FolderTitleText_MouseLeftButtonDown"/>
+                                        </StackPanel>
+                                    </Canvas>
+                                    <TextBox x:Name="InlineNameEditBox" Visibility="Collapsed" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource PopupTextBrush}" Background="#35000000" BorderBrush="{DynamicResource M3PrimaryBrush}" BorderThickness="1.5" Padding="6,2" KeyDown="InlineNameEditBox_KeyDown" LostFocus="InlineNameEditBox_LostFocus">
+                                        <TextBox.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="8"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+                                </Grid>
+
+                                <Border x:Name="ItemCountBorder" Background="{DynamicResource PopupItemBadgeBg}" CornerRadius="8" Padding="6,2" VerticalAlignment="Center">
+                                    <TextBlock x:Name="ItemCountBadge" Text="0 նիշք" FontSize="10" Foreground="{DynamicResource PopupItemBadgeFg}"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Header Action Buttons -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Edit / Pencil Button -->
+                                <Button x:Name="EditButton" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,4,0" ToolTip="Խմբագրել պանակը" Click="EditButton_Click">
+                                    <Path Width="11" Height="11" Stretch="Uniform" Fill="{DynamicResource PopupHeaderBtnFg}"
+                                          Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                </Button>
+
+                                <!-- Open in Explorer Button -->
+                                <Button x:Name="ExplorerButton" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,4,0" ToolTip="Բացել Explorer-ում" Click="ExplorerButton_Click">
+                                    <Path Width="12" Height="10" Stretch="Uniform" Fill="{DynamicResource PopupHeaderBtnFg}"
+                                          Data="M19,18H5V8H19M20,6H12L10,4H4C2.9,4 2,4.9 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8A2,2 0 0,0 20,6Z"/>
+                                </Button>
+
+                                <!-- Pin Button (Always on top / Unpin) -->
+                                <Button x:Name="PinButton" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,4,0" ToolTip="Ամրացնել" Click="PinButton_Click" RenderTransformOrigin="0.5,0.5">
+                                    <Button.RenderTransform>
+                                        <ScaleTransform x:Name="PinButtonScale" ScaleX="1.0" ScaleY="1.0"/>
+                                    </Button.RenderTransform>
+                                    <Path x:Name="PinIconPath" Width="11" Height="11" Stretch="Uniform" Fill="{DynamicResource PopupHeaderBtnFg}"
+                                          Data="M16,12V4H17V2H7V4H8V12L5,15V17H11V22L12,23L13,22V17H19V15L16,12Z"/>
+                                </Button>
+
+                                <!-- Overflow 3-dots Button -->
+                                <Button x:Name="MoreButton" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,4,0" Visibility="Collapsed" ToolTip="Այլ գործողություններ" Click="MoreButton_Click">
+                                    <TextBlock Text="•••" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                                </Button>
+
+                                <!-- Close Button -->
+                                <Button x:Name="CloseButton" Style="{StaticResource HeaderButtonStyle}" ToolTip="Փակել" Click="CloseButton_Click">
+                                    <TextBlock Text="✕" FontSize="11" FontWeight="Bold"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Breadcrumbs Bar (Shown when inside subfolder) -->
+                        <Border x:Name="BreadcrumbsBar" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,8" Background="Transparent" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="BreadcrumbsScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Focusable="False" HorizontalAlignment="Left" PreviewMouseWheel="BreadcrumbsScrollViewer_PreviewMouseWheel">
+                                <StackPanel x:Name="BreadcrumbsPanel" Orientation="Horizontal" VerticalAlignment="Center"/>
+                            </ScrollViewer>
+                        </Border>
+
+                        <!-- Edit Panel Flyout (Collapsible with smooth animation) -->
+                        <Grid x:Name="EditPanelContainer" Grid.Row="2" ClipToBounds="True" Visibility="Collapsed" Height="0">
+                            <Border x:Name="EditPanel" Width="234" HorizontalAlignment="Center" Background="#20FFFFFF" CornerRadius="12" Padding="10" Margin="0,0,0,10" Opacity="0" RenderTransformOrigin="0.5,0">
+                                <Border.RenderTransform>
+                                    <TranslateTransform x:Name="EditPanelTranslate" Y="-10"/>
+                                </Border.RenderTransform>
+                                <StackPanel>
+                                    <!-- Mode toggle: Always open with Panak (M3 Expressive Toggle Switch) -->
+                                    <CheckBox x:Name="AlwaysPanakCheckBox" Style="{StaticResource M3ExpressiveToggleSwitchStyle}" Content="Միշտ բացել որպես Panak" Margin="0,0,0,12" Checked="AlwaysPanakCheckBox_Checked" Unchecked="AlwaysPanakCheckBox_Unchecked"/>
+
+                                    <!-- Name editor (M3 Expressive Input & Button) -->
+                                    <TextBlock x:Name="EditNameLabel" Text="Անուն" FontSize="11" Foreground="{DynamicResource PopupSubtextBrush}" Margin="0,0,0,4"/>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="NameEditBox" Style="{StaticResource M3ExpressiveTextBoxStyle}" KeyDown="NameEditBox_KeyDown"/>
+                                        <Button Grid.Column="1" Content="✓" Style="{StaticResource M3ExpressiveFilledIconButton}" Margin="6,0,0,0" ToolTip="Պահպանել" Click="SaveNameButton_Click"/>
+                                    </Grid>
+
+                                    <!-- Color & Shape Combined Section -->
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock x:Name="ColorThemeLabel" Text="Գույն և ձև" FontSize="11" Foreground="{DynamicResource PopupSubtextBrush}" Margin="0,0,0,6"/>
+
+                                        <!-- Pastel Preset Swatches (8 colors justified across full width) -->
+                                        <UniformGrid x:Name="ColorSwatchesPanel" Columns="8" HorizontalAlignment="Stretch" Margin="0,0,0,8">
+                                            <RadioButton x:Name="AccentSwatch" GroupName="FolderColorGroup" Style="{StaticResource ColorSwatchStyle}" Background="#FCDDC5" Tag="#FCDDC5" ToolTip="Դեղձենի / Հիմնական" Checked="ColorSwatch_Checked"/>
+                                            <RadioButton GroupName="FolderColorGroup" Style="{StaticResource ColorSwatchStyle}" Background="#C5FCC5" Tag="#C5FCC5" ToolTip="Անանուխ" Checked="ColorSwatch_Checked"/>
+                                            <RadioButton GroupName="FolderColorGroup" Style="{StaticResource ColorSwatchStyle}" Background="#C5FCFC" Tag="#C5FCFC" ToolTip="Փիրուզ" Checked="ColorSwatch_Checked"/>
+                                            <RadioButton GroupName="FolderColorGroup" Style="{StaticResource ColorSwatchStyle}" Background="#C5DDFC" Tag="#C5DDFC" ToolTip="Երկնագույն" Checked="ColorSwatch_Checked"/>
+                                            <RadioButton GroupName="FolderColorGroup" Style="{StaticResource ColorSwatchStyle}" Background="#DDC5FC" Tag="#DDC5FC" ToolTip="Նարդոս" Checked="ColorSwatch_Checked"/>
+                                            <RadioButton GroupName="FolderColorGroup" Style="{StaticResource ColorSwatchStyle}" Background="#FCC5FC" Tag="#FCC5FC" ToolTip="Եղրևանի" Checked="ColorSwatch_Checked"/>
+                                            <RadioButton GroupName="FolderColorGroup" Style="{StaticResource ColorSwatchStyle}" Background="#FCC5DD" Tag="#FCC5DD" ToolTip="Վարդագույն" Checked="ColorSwatch_Checked"/>
+                                            <RadioButton GroupName="FolderColorGroup" Style="{StaticResource ColorSwatchStyle}" Background="#FCFCC5" Tag="#FCFCC5" ToolTip="Կարագագույն" Checked="ColorSwatch_Checked"/>
+                                        </UniformGrid>
+
+                                        <!-- Shape Selector: Justified 2-Shape Capsule Bar (Lite: Circle & Squircle) -->
+                                        <Border x:Name="ShapeCapsuleBorder" Background="{DynamicResource ShapeCapsuleBgBrush}" CornerRadius="21" Padding="4,3" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" Margin="0,4,0,0">
+                                            <Grid x:Name="ShapeCapsuleGrid" HorizontalAlignment="Stretch" SizeChanged="ShapeCapsuleGrid_SizeChanged">
+                                                <!-- Sliding Shape Pill -->
+                                                <Border x:Name="FolderShapePill" Height="36" CornerRadius="11"
+                                                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                        Background="{DynamicResource ShapeSelectedBgBrush}">
+                                                    <Border.RenderTransform>
+                                                        <TranslateTransform x:Name="FolderShapePillTranslate" X="0"/>
+                                                    </Border.RenderTransform>
+                                                </Border>
+                                                <UniformGrid x:Name="ShapeSelectorPanel" Columns="2" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                                    <!-- 1. Circle -->
+                                                    <RadioButton x:Name="ShapeRadioCircle" GroupName="FolderShapeGroup" Style="{StaticResource ShapeSelectorRadioStyle}"
+                                                                 Tag="{StaticResource GeomCircle}" ToolTip="Շրջան" Click="ShapeRadio_Click"/>
+                                                    <!-- 2. Squircle -->
+                                                    <RadioButton x:Name="ShapeRadioSquircle" GroupName="FolderShapeGroup" Style="{StaticResource ShapeSelectorRadioStyle}"
+                                                                 Tag="{StaticResource GeomSquircle}" ToolTip="Շրջանակված քառակուսի" Click="ShapeRadio_Click"/>
+                                                </UniformGrid>
+                                            </Grid>
+                                        </Border>
+                                        <!-- Hidden elements for Panak Lite (Disabled Features) -->
+                                        <StackPanel Visibility="Collapsed" IsHitTestVisible="False">
+                                            <Slider x:Name="HueSlider" ValueChanged="HueSlider_ValueChanged"/>
+                                            <Slider x:Name="OpacitySlider" ValueChanged="OpacitySlider_ValueChanged"/>
+                                            <RadioButton x:Name="ShapeRadioClover" Click="ShapeRadio_Click"/>
+                                            <RadioButton x:Name="ShapeRadioScallop" Click="ShapeRadio_Click"/>
+                                            <RadioButton x:Name="ShapeRadioArch" Click="ShapeRadio_Click"/>
+                                            <TextBlock x:Name="FolderLockHeaderLabel"/>
+                                            <Button x:Name="FolderLockBtn" Click="FolderLockBtn_Click">
+                                                <StackPanel>
+                                                    <TextBlock x:Name="FolderLockBtnIcon"/>
+                                                    <TextBlock x:Name="FolderLockBtnText"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </StackPanel>
+                                        <!-- Unpack Panak folder button -->
+                                        <Button x:Name="UnpackFolderButton" Style="{StaticResource HeaderButtonStyle}" Margin="0,10,0,0" Padding="8,6" HorizontalAlignment="Stretch" ToolTip="Հանել բոլոր նիշքերը պանակից" Click="MenuItemUnpack_Click">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <TextBlock Text="📦 " FontSize="12"/>
+                                                <TextBlock x:Name="UnpackFolderBtnText" Text="Ապահավաքել Panak-ը" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Items Grid or Empty State -->
+                        <Grid x:Name="ContentAreaGrid" Grid.Row="3" ClipToBounds="True">
+                            <!-- Lock Overlay Screen (Shown when folder is locked or in remove lock mode) -->
+                            <controls:LockOverlayControl x:Name="PopupLockOverlay" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+
+                            <!-- In-Place Lock Setup Screen (Transformed inside popup) -->
+                            <Border x:Name="LockSetupPanel" Visibility="Collapsed" Width="280" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <!-- Badge -->
+                                    <Grid Width="46" Height="46" HorizontalAlignment="Center" Margin="0,0,0,6">
+                                        <Ellipse Fill="{DynamicResource M3PrimaryBrush}" Opacity="0.18"/>
+                                        <TextBlock Text="🔒" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <!-- Title -->
+                                    <TextBlock Text="Կողպել պանակը" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource PopupTextBrush}" TextAlignment="Center"/>
+                                    <TextBlock Text="Ընտրեք եղանակը և մուտքագրեք կոդը" FontSize="10.5" Foreground="{DynamicResource PopupSubtextBrush}" TextAlignment="Center" Margin="0,2,0,10"/>
+
+                                    <!-- Method Switcher (Segmented Pill) -->
+                                    <Border Background="#25000000" CornerRadius="12" Padding="3" Margin="0,0,0,12">
+                                        <UniformGrid Columns="3">
+                                            <RadioButton x:Name="SetupMethodPasswordRadio" Style="{StaticResource SetupMethodTabStyle}" Content="Գաղտնաբառ" IsChecked="True" Checked="SetupMethodRadio_Checked"/>
+                                            <RadioButton x:Name="SetupMethodPinRadio" Style="{StaticResource SetupMethodTabStyle}" Content="PIN" Checked="SetupMethodRadio_Checked"/>
+                                            <RadioButton x:Name="SetupMethodPatternRadio" Style="{StaticResource SetupMethodTabStyle}" Content="Նախշ" Checked="SetupMethodRadio_Checked"/>
+                                        </UniformGrid>
+                                    </Border>
+
+                                    <!-- Method 1: Password -->
+                                    <StackPanel x:Name="SetupPasswordContainer" Visibility="Visible" Width="250">
+                                        <TextBlock Text="Նոր գաղտնաբառ" FontSize="10.5" Foreground="{DynamicResource PopupSubtextBrush}" Margin="2,0,0,3"/>
+                                        <Border CornerRadius="12" Background="#20000000" BorderBrush="{DynamicResource M3PrimaryBrush}" BorderThickness="1.2" Margin="0,0,0,8">
+                                            <PasswordBox x:Name="SetupPasswordInput" Height="34" Padding="10,6" Background="Transparent" Foreground="{DynamicResource PopupTextBrush}" BorderThickness="0" FontSize="12.5" VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="Հաստատեք գաղտնաբառը" FontSize="10.5" Foreground="{DynamicResource PopupSubtextBrush}" Margin="2,0,0,3"/>
+                                        <Border CornerRadius="12" Background="#20000000" BorderBrush="{DynamicResource M3PrimaryBrush}" BorderThickness="1.2" Margin="0,0,0,10">
+                                            <PasswordBox x:Name="SetupPasswordConfirm" Height="34" Padding="10,6" Background="Transparent" Foreground="{DynamicResource PopupTextBrush}" BorderThickness="0" FontSize="12.5" VerticalContentAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Method 2: PIN -->
+                                    <StackPanel x:Name="SetupPinContainer" Visibility="Collapsed" Width="250">
+                                        <TextBlock Text="PIN կոդ" FontSize="10.5" Foreground="{DynamicResource PopupSubtextBrush}" Margin="2,0,0,3"/>
+                                        <Border CornerRadius="12" Background="#20000000" BorderBrush="{DynamicResource M3PrimaryBrush}" BorderThickness="1.2" Margin="0,0,0,8">
+                                            <PasswordBox x:Name="SetupPinInput" Height="34" Padding="10,6" Background="Transparent" Foreground="{DynamicResource PopupTextBrush}" BorderThickness="0" FontSize="12.5" VerticalContentAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="Հաստատեք PIN կոդը" FontSize="10.5" Foreground="{DynamicResource PopupSubtextBrush}" Margin="2,0,0,3"/>
+                                        <Border CornerRadius="12" Background="#20000000" BorderBrush="{DynamicResource M3PrimaryBrush}" BorderThickness="1.2" Margin="0,0,0,10">
+                                            <PasswordBox x:Name="SetupPinConfirm" Height="34" Padding="10,6" Background="Transparent" Foreground="{DynamicResource PopupTextBrush}" BorderThickness="0" FontSize="12.5" VerticalContentAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Method 3: Pattern (Interactive Canvas) -->
+                                    <StackPanel x:Name="SetupPatternContainer" Visibility="Collapsed" HorizontalAlignment="Center">
+                                        <TextBlock Text="Քաշեք մկնիկով՝ նախշը գծելու համար" FontSize="10.5" Foreground="{DynamicResource PopupSubtextBrush}" TextAlignment="Center" Margin="0,0,0,6"/>
+                                        <Border Background="#20000000" CornerRadius="18" Padding="10" HorizontalAlignment="Center">
+                                            <Canvas x:Name="InlineSetupPatternCanvas" Width="170" Height="170" Background="Transparent" ClipToBounds="False"
+                                                    PreviewMouseDown="InlineSetupPatternCanvas_MouseDown"
+                                                    PreviewMouseMove="InlineSetupPatternCanvas_MouseMove"
+                                                    PreviewMouseUp="InlineSetupPatternCanvas_MouseUp"
+                                                    MouseLeave="InlineSetupPatternCanvas_MouseLeave"/>
+                                        </Border>
+                                        <TextBlock x:Name="InlineSetupPatternText" Text="Ընտրված կետեր՝ (չկա)" FontSize="10.5" Foreground="{DynamicResource M3PrimaryBrush}" TextAlignment="Center" Margin="0,5,0,0"/>
+                                        <Button Style="{StaticResource HeaderButtonStyle}" Content="Մաքրել" HorizontalAlignment="Center" Margin="0,4,0,8" Padding="12,3" FontSize="10.5" Click="InlineSetupPatternClear_Click"/>
+                                    </StackPanel>
+
+                                    <!-- Error Badge -->
+                                    <Border x:Name="SetupErrorBadge" Background="#35FF4444" CornerRadius="8" Padding="10,4" Margin="0,0,0,10" Visibility="Collapsed">
+                                        <TextBlock x:Name="SetupErrorText" Text="Սխալ մուտքագրում" FontSize="11" Foreground="#FF6B6B" FontWeight="SemiBold" TextAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Action Buttons -->
+                                    <Grid Width="250" Margin="0,4,0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="SetupCancelBtn" Style="{StaticResource HeaderButtonStyle}" Content="Չեղարկել" HorizontalAlignment="Left" Padding="14,6" FontSize="11.5" Click="SetupCancelBtn_Click"/>
+                                        <Button x:Name="SetupSaveBtn" Grid.Column="1" Style="{StaticResource HeaderButtonStyle}" Background="{DynamicResource M3PrimaryBrush}" Foreground="#FFFFFF" Content="Պահպանել" HorizontalAlignment="Right" Padding="14,6" FontSize="11.5" FontWeight="SemiBold" Click="SetupSaveBtn_Click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Empty State -->
+                            <StackPanel x:Name="EmptyStatePanel" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,16" Visibility="Collapsed">
+                                <TextBlock Text="📂" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,6" Opacity="0.7"/>
+                                <TextBlock x:Name="EmptyTitleText" Text="Պանակը դատարկ է" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource PopupTextBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="EmptySubtext" Text="Քաշեք նիշքերն այստեղ ավելացնելու համար" FontSize="11" Foreground="{DynamicResource PopupSubtextBrush}" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                            </StackPanel>
+
+                            <!-- Items ScrollViewer (ScrollBar Mode) -->
+                            <ScrollViewer x:Name="ItemsScrollViewer" Style="{StaticResource PanakScrollViewerStyle}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="380">
+                                <ItemsControl x:Name="FolderItemsControl" ItemTemplate="{StaticResource PanakItemDataTemplate}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid x:Name="ItemsUniformGrid" Loaded="ItemsUniformGrid_Loaded"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </ScrollViewer>
+
+                            <!-- Slider Pages Viewport (Slider Mode) -->
+                            <Grid x:Name="SliderPagesViewport" ClipToBounds="True" Visibility="Collapsed"
+                                  PreviewMouseDown="SliderViewport_PreviewMouseDown"
+                                  PreviewMouseMove="SliderViewport_PreviewMouseMove"
+                                  PreviewMouseUp="SliderViewport_PreviewMouseUp"
+                                  PreviewMouseWheel="SliderViewport_PreviewMouseWheel">
+                                <Canvas ClipToBounds="False">
+                                    <StackPanel x:Name="SliderPagesPanel" Orientation="Horizontal">
+                                        <StackPanel.RenderTransform>
+                                            <TranslateTransform x:Name="PagesTranslateX" X="0"/>
+                                        </StackPanel.RenderTransform>
+                                    </StackPanel>
+                                </Canvas>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Footer Pager Row (Slider Mode) -->
+                        <Grid x:Name="FooterPagerGrid" Grid.Row="4" Margin="0,6,0,2" Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Button x:Name="SliderPrevButton" Style="{StaticResource HeaderButtonStyle}" Width="24" Height="22" Padding="0" Margin="0,0,6,0" ToolTip="Previous page" Click="SliderPrevButton_Click">
+                                    <TextBlock Text="‹" FontSize="16" FontWeight="Bold" Margin="0,-2,0,0"/>
+                                </Button>
+                                <StackPanel x:Name="SliderDotsPanel" Orientation="Horizontal" VerticalAlignment="Center"/>
+                                <Button x:Name="SliderNextButton" Style="{StaticResource HeaderButtonStyle}" Width="24" Height="22" Padding="0" Margin="6,0,0,0" ToolTip="Next page" Click="SliderNextButton_Click">
+                                    <TextBlock Text="›" FontSize="16" FontWeight="Bold" Margin="0,-2,0,0"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                    <!-- In-Window Overflow Dropdown Menu (Floating inside the popup card) -->
+                    <Border x:Name="MoreActionsMenuBorder"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Margin="0, 42, 10, 0"
+                            CornerRadius="14"
+                            Padding="5"
+                            Visibility="Collapsed"
+                            Opacity="0"
+                            Panel.ZIndex="1000"
+                            BorderThickness="0"
+                            MinWidth="144"
+                            RenderTransformOrigin="0.9, 0.0">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="MoreActionsMenuScale" ScaleX="0.85" ScaleY="0.85"/>
+                        </Border.RenderTransform>
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.36" Color="#000000" Direction="270"/>
+                        </Border.Effect>
+                        <StackPanel HorizontalAlignment="Stretch">
+                            <!-- Pin Item -->
+                            <Border Style="{StaticResource PopupDropdownItemStyle}" MouseLeftButtonDown="MenuPin_Click">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Path x:Name="MenuPinIconPath" Width="11" Height="11" Stretch="Uniform" Fill="{DynamicResource PopupHeaderBtnFg}" Data="M16,12V4H17V2H7V4H8V12L5,15V17H11V22L12,23L13,22V17H19V15L16,12Z" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="MenuPinText" Grid.Column="1" Text="Ամրացնել" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource PopupTextBrush}" VerticalAlignment="Center" Margin="6,0,10,0" TextWrapping="NoWrap"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Edit Item -->
+                            <Border Style="{StaticResource PopupDropdownItemStyle}" MouseLeftButtonDown="MenuEdit_Click">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Path x:Name="MenuEditIconPath" Width="11" Height="11" Stretch="Uniform" Fill="{DynamicResource PopupHeaderBtnFg}" Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="MenuEditText" Grid.Column="1" Text="Խմբագրել" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource PopupTextBrush}" VerticalAlignment="Center" Margin="6,0,10,0" TextWrapping="NoWrap"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Explorer Item -->
+                            <Border Style="{StaticResource PopupDropdownItemStyle}" MouseLeftButtonDown="MenuExplorer_Click">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Path x:Name="MenuExplorerIconPath" Width="12" Height="10" Stretch="Uniform" Fill="{DynamicResource PopupHeaderBtnFg}" Data="M19,18H5V8H19M20,6H12L10,4H4C2.9,4 2,4.9 2,6V18A2,2 0 0,0 22,18V8A2,2 0 0,0 20,6Z" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="MenuExplorerText" Grid.Column="1" Text="Explorer-ում" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource PopupTextBrush}" VerticalAlignment="Center" Margin="6,0,10,0" TextWrapping="NoWrap"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Border>
+    </Grid>
+</Window>

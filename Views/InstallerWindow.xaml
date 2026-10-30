@@ -1,0 +1,530 @@
+<Window x:Class="Panak.Views.InstallerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Panak.Controls"
+        Title="Panak Setup"
+        Height="500"
+        Width="520"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <!-- Material You (M3) Dynamic Color Brushes (Default to warm peach/caramel seed ~26°) -->
+        <SolidColorBrush x:Key="M3SurfaceBrush" Color="#FEF4EB"/>
+        <SolidColorBrush x:Key="M3SurfaceContainerBrush" Color="#FCDDC5"/>
+        <SolidColorBrush x:Key="M3CardBrush" Color="#FFF7F0"/>
+        <SolidColorBrush x:Key="M3PrimaryBrush" Color="#7A5427"/>
+        <SolidColorBrush x:Key="M3OnPrimaryBrush" Color="#FEF4EB"/>
+        <SolidColorBrush x:Key="M3OnSurfaceBrush" Color="#2B1D11"/>
+        <SolidColorBrush x:Key="M3OnSurfaceVariantBrush" Color="#6E5643"/>
+        <SolidColorBrush x:Key="M3TrackInactiveBrush" Color="#EED7C5"/>
+        <SolidColorBrush x:Key="M3ErrorContainerBrush" Color="#FFDAD6"/>
+        <SolidColorBrush x:Key="M3OnErrorContainerBrush" Color="#410002"/>
+
+        <!-- Dynamic Logo Brushes -->
+        <SolidColorBrush x:Key="LogoContainerBrush" Color="#E5CBB4"/>
+        <SolidColorBrush x:Key="LogoArrowBrush" Color="#481A0A"/>
+        <SolidColorBrush x:Key="LogoTriangleBrush" Color="#884433"/>
+        <SolidColorBrush x:Key="LogoCloudBrush" Color="#481A0A"/>
+        <SolidColorBrush x:Key="LogoShieldBrush" Color="#CFA636"/>
+        <SolidColorBrush x:Key="LogoEllipseBrush" Color="#CF5D36"/>
+
+        <!-- Material 3 Section Card Style: Pure borderless elevated container -->
+        <Style x:Key="SectionCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource M3CardBrush}"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- Danger Warning Card Style -->
+        <Style x:Key="DangerCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource M3ErrorContainerBrush}"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,14"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <!-- Modern Sleek ScrollBar Style -->
+        <Style x:Key="ModernScrollThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="ThumbBorder" CornerRadius="3"
+                                Background="{DynamicResource M3PrimaryBrush}"
+                                Opacity="0.55"
+                                Margin="1,0,1,0"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ThumbBorder" Property="Opacity" Value="0.90"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="ThumbBorder" Property="Opacity" Value="1.0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="MinWidth" Value="6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" Opacity="0" Focusable="False"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ModernScrollThumb}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}" Opacity="0" Focusable="False"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material Design 3 Expressive Toggle Switch Style (matching Panak folder popup) -->
+        <Style x:Key="MaterialSwitchStyle" TargetType="CheckBox">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid Background="Transparent" VerticalAlignment="Center">
+                            <!-- Switch Track (44x24 pill) -->
+                            <Border x:Name="SwitchTrack" Width="44" Height="24" CornerRadius="12"
+                                    BorderThickness="2" BorderBrush="{DynamicResource M3TrackInactiveBrush}" Background="{DynamicResource M3TrackInactiveBrush}"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <!-- Switch Thumb Container -->
+                                <Canvas Width="40" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="False">
+                                    <!-- Unchecked Thumb: 14x14 at left -->
+                                    <Border x:Name="SwitchThumb" Width="14" Height="14" CornerRadius="7"
+                                            Background="{DynamicResource M3OnSurfaceVariantBrush}" Canvas.Left="2" Canvas.Top="3"/>
+                                    <!-- Checked Icon: subtle vector check inside thumb -->
+                                    <Path x:Name="CheckIcon" Data="M 1,4 L 3.5,6.5 L 7.5,1.5"
+                                          Stroke="{DynamicResource M3PrimaryBrush}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                          Canvas.Left="26" Canvas.Top="6" Visibility="Collapsed"/>
+                                </Canvas>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="SwitchTrack" Property="Background" Value="{DynamicResource M3PrimaryBrush}"/>
+                                <Setter TargetName="SwitchTrack" Property="BorderBrush" Value="{DynamicResource M3PrimaryBrush}"/>
+                                <Setter TargetName="SwitchThumb" Property="Canvas.Left" Value="21"/>
+                                <Setter TargetName="SwitchThumb" Property="Width" Value="18"/>
+                                <Setter TargetName="SwitchThumb" Property="Height" Value="18"/>
+                                <Setter TargetName="SwitchThumb" Property="CornerRadius" Value="9"/>
+                                <Setter TargetName="SwitchThumb" Property="Canvas.Top" Value="1"/>
+                                <Setter TargetName="SwitchThumb" Property="Background" Value="{DynamicResource M3OnPrimaryBrush}"/>
+                                <Setter TargetName="CheckIcon" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="SwitchTrack" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material 3 Button Styles: Borderless pills with responsive motion feedback -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource M3PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3OnPrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="22,9"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.92"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.80"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource M3SurfaceContainerBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3PrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="18,9"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DangerButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource M3ErrorContainerBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3OnErrorContainerBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,9"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CloseIconButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3OnSurfaceBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Width="36" Height="36" CornerRadius="18" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource M3SurfaceContainerBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource M3PrimaryBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material Design 3 ComboBox Style: Pill container, rotating chevron & elevated rounded popup -->
+        <Style x:Key="MaterialComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3OnSurfaceBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="ItemBorder" CornerRadius="12" Margin="4,2" Padding="12,8" Background="Transparent" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource M3OnSurfaceBrush}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource M3SurfaceContainerBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource M3PrimaryBrush}"/>
+                                <Setter TargetName="ItemBorder" Property="TextBlock.Foreground" Value="{DynamicResource M3PrimaryBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource M3SurfaceContainerBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource M3PrimaryBrush}"/>
+                                <Setter TargetName="ItemBorder" Property="TextBlock.Foreground" Value="{DynamicResource M3PrimaryBrush}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MaterialComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource MaterialComboBoxItemStyle}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3OnSurfaceBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="DropDownToggle" Focusable="False" ClickMode="Press"
+                                          Foreground="{DynamicResource M3OnSurfaceBrush}"
+                                          TextBlock.Foreground="{DynamicResource M3OnSurfaceBrush}"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="ToggleBorder" Height="32" CornerRadius="16"
+                                                Background="{DynamicResource M3SurfaceContainerBrush}"
+                                                BorderThickness="0" Padding="12,0,10,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0" Content="{TemplateBinding Content}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  TextBlock.Foreground="{DynamicResource M3OnSurfaceBrush}"
+                                                                  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                <Path x:Name="ChevronPath" Grid.Column="1" Data="M 0,0 L 4 4 L 8,0"
+                                                      Stroke="{DynamicResource M3PrimaryBrush}" StrokeThickness="1.8"
+                                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                      VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="ToggleBorder" Property="Opacity" Value="0.88"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                                <ContentPresenter IsHitTestVisible="False"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                  TextBlock.Foreground="{DynamicResource M3OnSurfaceBrush}"
+                                                  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            </ToggleButton>
+
+                            <Popup x:Name="PART_Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom" PopupAnimation="Slide">
+                                <Border x:Name="PopupBorder" MinWidth="{Binding ActualWidth, ElementName=DropDownToggle}"
+                                        Margin="0,4,0,0" CornerRadius="14"
+                                        Background="{DynamicResource M3SurfaceBrush}"
+                                        TextBlock.Foreground="{DynamicResource M3OnSurfaceBrush}"
+                                        BorderThickness="1" BorderBrush="{DynamicResource M3SurfaceContainerBrush}" Padding="4">
+                                    <ScrollViewer MaxHeight="200" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Main Window Surface: Borderless Material You card -->
+    <Border x:Name="MainWindowBorder" Margin="0" CornerRadius="24" Background="{DynamicResource M3SurfaceBrush}" BorderThickness="0" BorderBrush="Transparent">
+
+        <Grid Margin="22">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header -->
+                <RowDefinition Height="*"/>    <!-- Content Body -->
+                <RowDefinition Height="Auto"/> <!-- Footer Actions -->
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,16" MouseDown="Header_MouseDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Dynamic Vector Panak Setup SVG Logo (svg/Setup.svg) -->
+                    <Viewbox Width="40" Height="40" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <Canvas Width="88" Height="88" Clip="M 0,0 L 88,0 L 88,88 L 0,88 Z">
+                            <!-- 1. Scalloped container badge base -->
+                            <Path Data="M59.4086 1.20571C76.2803 -3.9745 92.0771 11.8223 86.8968 28.694L84.1639 37.595C82.8719 41.8029 82.8719 46.3016 84.1639 50.5095L86.8968 59.4105C92.0771 76.2822 76.2803 92.079 59.4086 86.8988L50.5076 84.1659C46.2997 82.8739 41.8009 82.8739 37.593 84.1659L28.6921 86.8988C11.8203 92.079 -3.97645 76.2822 1.20376 59.4105L3.93668 50.5095C5.22865 46.3016 5.22865 41.8029 3.93668 37.595L1.20376 28.694C-3.97645 11.8223 11.8203 -3.9745 28.692 1.20571L37.593 3.93863C41.8009 5.23061 46.2997 5.23061 50.5076 3.93863L59.4086 1.20571Z"
+                                  Fill="{DynamicResource LogoContainerBrush}"/>
+                            <!-- 2. Downward triangle arrow -->
+                            <Path Data="M48.3301 54.5C46.4056 57.8333 41.5944 57.8333 39.6699 54.5L22.3494 24.5C20.4249 21.1667 22.8305 17 26.6795 17L61.3205 17C65.1695 17 67.5751 21.1667 65.6506 24.5L48.3301 54.5Z"
+                                  Fill="{DynamicResource LogoArrowBrush}"/>
+                            <!-- 3. Bottom rounded bar -->
+                            <Rectangle Canvas.Left="17" Canvas.Top="62" Width="53" Height="10" RadiusX="3" RadiusY="3"
+                                       Fill="{DynamicResource LogoArrowBrush}"/>
+                        </Canvas>
+                    </Viewbox>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="WizardTitleText" Text="Panak Setup" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource M3OnSurfaceBrush}"/>
+                        <TextBlock x:Name="WizardSubtitleText" Text="Material You Popup Folders for Windows" FontSize="11" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- UN Languages + Armenian Dropdown -->
+                    <ComboBox x:Name="LanguageComboBox" Width="120" Height="32" Margin="0,0,10,0" Style="{StaticResource MaterialComboBoxStyle}" SelectionChanged="LanguageComboBox_SelectionChanged">
+                        <ComboBoxItem Content="Հայերեն" Tag="hy"/>
+                        <ComboBoxItem Content="English" Tag="en"/>
+                        <ComboBoxItem Content="Русский" Tag="ru"/>
+                        <ComboBoxItem Content="Français" Tag="fr"/>
+                        <ComboBoxItem Content="Español" Tag="es"/>
+                        <ComboBoxItem Content="中文" Tag="zh"/>
+                        <ComboBoxItem Content="العربية" Tag="ar"/>
+                    </ComboBox>
+                    <Button Style="{StaticResource CloseIconButtonStyle}" Content="✕" Width="36" Height="36" Click="CancelButton_Click"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Body Content -->
+            <Grid Grid.Row="1" Margin="0,0,0,14">
+                <!-- Install View -->
+                <StackPanel x:Name="InstallPanel">
+                    <!-- Feature Intro Card -->
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <TextBlock x:Name="InstallIntroText"
+                                   Text="Install Panak to enjoy Material You popup folder widgets, dynamic 2x2 preview icons, right double-click quick look, and Windows Explorer context menu integration."
+                                   FontSize="12" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" TextWrapping="Wrap" LineHeight="17"/>
+                    </Border>
+
+                    <!-- Desktop Shortcut Option -->
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="DesktopShortcutTitleText" Text="Create Desktop Shortcut" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource M3OnSurfaceBrush}"/>
+                                <TextBlock x:Name="DesktopShortcutDescText" Text="Quick access directly from your desktop" FontSize="11" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                            <CheckBox x:Name="DesktopShortcutCheckBox" Grid.Column="1" Style="{StaticResource MaterialSwitchStyle}" IsChecked="True" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Start Menu Shortcut Option -->
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="StartMenuShortcutTitleText" Text="Create Start Menu Shortcut" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource M3OnSurfaceBrush}"/>
+                                <TextBlock x:Name="StartMenuShortcutDescText" Text="Add Panak to the Windows Start Menu" FontSize="11" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                            <CheckBox x:Name="StartMenuShortcutCheckBox" Grid.Column="1" Style="{StaticResource MaterialSwitchStyle}" IsChecked="True" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Auto Start with Windows Option -->
+                    <Border Style="{StaticResource SectionCardStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="AutoStartTitleText" Text="Start with Windows" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource M3OnSurfaceBrush}"/>
+                                <TextBlock x:Name="AutoStartDescText" Text="Launch automatically on Windows startup" FontSize="11" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                            <CheckBox x:Name="AutoStartCheckBox" Grid.Column="1" Style="{StaticResource MaterialSwitchStyle}" IsChecked="True" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- Uninstall View -->
+                <StackPanel x:Name="UninstallPanel" Visibility="Collapsed">
+                    <!-- Warning Card -->
+                    <Border Style="{StaticResource DangerCardStyle}">
+                        <StackPanel>
+                            <TextBlock x:Name="UninstallIntroText" Text="Are you sure you want to remove Panak from your computer?"
+                                       FontSize="14" FontWeight="Bold" Foreground="{DynamicResource M3OnErrorContainerBrush}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Components Removal List Card -->
+                    <Border Style="{StaticResource SectionCardStyle}" Padding="16,14">
+                        <StackPanel>
+                            <TextBlock x:Name="UninstallWillRemoveText" Text="This will remove the following components:"
+                                       FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource M3OnSurfaceBrush}" Margin="0,0,0,8"/>
+                            <StackPanel Margin="6,0,0,0">
+                                <TextBlock x:Name="UninstallItemContextMenuText" Text="• Windows Explorer context menu items" FontSize="12" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" Margin="0,3"/>
+                                <TextBlock x:Name="UninstallItemShortcutsText" Text="• Desktop and Start Menu shortcuts" FontSize="12" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" Margin="0,3"/>
+                                <TextBlock x:Name="UninstallItemStartupText" Text="• Automatic startup configuration" FontSize="12" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" Margin="0,3"/>
+                                <TextBlock x:Name="UninstallItemFilesText" Text="• Program files and registry entries" FontSize="12" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" Margin="0,3"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Progress View (During Install / Uninstall) -->
+                <StackPanel x:Name="ProgressPanel" Visibility="Collapsed" VerticalAlignment="Center">
+                    <Border Style="{StaticResource SectionCardStyle}" Padding="24,28">
+                        <StackPanel>
+                            <TextBlock x:Name="ProgressTitleText" Text="Installing Panak..." FontSize="16" FontWeight="Bold" Foreground="{DynamicResource M3OnSurfaceBrush}" Margin="0,0,0,12"/>
+                            <controls:WavyProgressBar x:Name="InstallationProgressBar" Height="16" Minimum="0" Maximum="100" Value="10" Margin="0,0,0,12"/>
+                            <TextBlock x:Name="ProgressStatusText" Text="Extracting files..." FontSize="12" Foreground="{DynamicResource M3OnSurfaceVariantBrush}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Completed View -->
+                <StackPanel x:Name="CompletedPanel" Visibility="Collapsed" VerticalAlignment="Center">
+                    <Border Style="{StaticResource SectionCardStyle}" Padding="24,28">
+                        <StackPanel HorizontalAlignment="Center">
+                            <Border Width="60" Height="60" CornerRadius="30" Background="{DynamicResource M3SurfaceContainerBrush}" HorizontalAlignment="Center" Margin="0,0,0,14">
+                                <TextBlock x:Name="StatusEmoji" Text="🎉" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock x:Name="StatusTitle" Text="Operation Completed!" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource M3OnSurfaceBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                            <TextBlock x:Name="StatusSubtitle" Text="Panak is now ready to use." FontSize="12" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" HorizontalAlignment="Center" Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <!-- Footer Actions -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="CancelActionBtn" Grid.Column="0" Style="{StaticResource SecondaryButtonStyle}" Content="Cancel" Click="CancelButton_Click"/>
+                <TextBlock Grid.Column="1" Text="Panak v1.8.1" FontSize="11" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8,0"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button x:Name="MainActionBtn" Style="{StaticResource ActionButtonStyle}" Content="Install Now" Click="MainActionBtn_Click"/>
+                    <Button x:Name="FinishBtn" Style="{StaticResource ActionButtonStyle}" Content="Finish" Visibility="Collapsed" Click="FinishBtn_Click"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

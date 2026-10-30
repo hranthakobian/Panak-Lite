@@ -1,0 +1,268 @@
+<Window x:Class="Panak.Views.CrashReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Panak - Սխալի մասին հաղորդում / Crash Report"
+        Height="540" Width="600"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True">
+
+    <Window.Resources>
+        <!-- Default Material You dynamic theme brushes (dynamically updated in code-behind) -->
+        <SolidColorBrush x:Key="M3SurfaceBrush" Color="#FEF4EB"/>
+        <SolidColorBrush x:Key="M3SurfaceContainerBrush" Color="#FCDDC5"/>
+        <SolidColorBrush x:Key="M3CardBrush" Color="#FFF7F0"/>
+        <SolidColorBrush x:Key="M3PrimaryBrush" Color="#7A5427"/>
+        <SolidColorBrush x:Key="M3OnPrimaryBrush" Color="#FEF4EB"/>
+        <SolidColorBrush x:Key="M3OnSurfaceBrush" Color="#2B1D11"/>
+        <SolidColorBrush x:Key="M3OnSurfaceVariantBrush" Color="#6E5643"/>
+        <SolidColorBrush x:Key="M3ErrorContainerBrush" Color="#FFDAD6"/>
+        <SolidColorBrush x:Key="M3OnErrorContainerBrush" Color="#93000A"/>
+
+        <!-- 5 Shape Geometries matching Settings and Folders -->
+        <StreamGeometry x:Key="GeomCircle">M 12,1 A 11,11 0 1 1 11.99,1 Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomSquircle">M 7,1 L 17,1 A 6,6 0 0 1 23,7 L 23,17 A 6,6 0 0 1 17,23 L 7,23 A 6,6 0 0 1 1,17 L 1,7 A 6,6 0 0 1 7,1 Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomStar">M59.2054 1.00063C76.0771 -4.17958 91.8739 11.6172 86.6937 28.4889L83.9608 37.3899C82.6688 41.5978 82.6688 46.0965 83.9608 50.3044L86.6937 59.2054C91.8739 76.0771 76.0771 91.8739 59.2054 86.6937L50.3044 83.9608C46.0965 82.6688 41.5978 82.6688 37.3899 83.9608L28.4889 86.6937C11.6172 91.8739 -4.17958 76.0771 1.00063 59.2054L3.73355 50.3044C5.02553 46.0965 5.02553 41.5978 3.73355 37.3899L1.00063 28.4889C-4.17958 11.6172 11.6172 -4.17958 28.4889 1.00063L37.3899 3.73355C41.5978 5.02553 46.0965 5.02553 50.3044 3.73355L59.2054 1.00063Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomClover">M59.2054 1.00063C76.0771 -4.17958 91.8739 11.6172 86.6937 28.4889L83.9608 37.3899C82.6688 41.5978 82.6688 46.0965 83.9608 50.3044L86.6937 59.2054C91.8739 76.0771 76.0771 91.8739 59.2054 86.6937L50.3044 83.9608C46.0965 82.6688 41.5978 82.6688 37.3899 83.9608L28.4889 86.6937C11.6172 91.8739 -4.17958 76.0771 1.00063 59.2054L3.73355 50.3044C5.02553 46.0965 5.02553 41.5978 3.73355 37.3899L1.00063 28.4889C-4.17958 11.6172 11.6172 -4.17958 28.4889 1.00063L37.3899 3.73355C41.5978 5.02553 46.0965 5.02553 50.3044 3.73355L59.2054 1.00063Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomScallop">M 12.00,0.80 Q 14.54,2.53 17.60,2.30 Q 18.93,5.07 21.70,6.40 Q 21.47,9.46 23.20,12.00 Q 21.47,14.54 21.70,17.60 Q 18.93,18.93 17.60,21.70 Q 14.54,21.47 12.00,23.20 Q 9.46,21.47 6.40,21.70 Q 5.07,18.93 2.30,17.60 Q 2.53,14.54 0.80,12.00 Q 2.53,9.46 2.30,6.40 Q 5.07,5.07 6.40,2.30 Q 9.46,2.53 12.00,0.80 Z</StreamGeometry>
+        <StreamGeometry x:Key="GeomArch">M 1,12 A 11,11 0 0 1 23,12 L 23,19 A 4,4 0 0 1 19,23 L 5,23 A 4,4 0 0 1 1,19 Z</StreamGeometry>
+
+        <!-- Primary Pill Button Style (Matching Settings Window ActionButtonStyle) -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource M3PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3OnPrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,9"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="BtnScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.92"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleX" To="0.96" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleY" To="0.96" Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="BtnScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.82"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Secondary Pill Button Style (Matching Settings Window SecondaryButtonStyle) -->
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource M3SurfaceContainerBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3PrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,9"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="BtnScale" ScaleX="1.0" ScaleY="1.0"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Close Button (Matching Settings Window M3IconCloseButtonStyle) -->
+        <Style x:Key="M3IconCloseButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource M3OnSurfaceBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="IconBorder" Background="{TemplateBinding Background}" CornerRadius="14" RenderTransformOrigin="0.5,0.5">
+                            <TextBlock Text="{TemplateBinding Content}" FontSize="12" FontWeight="Bold"
+                                       Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="IconBorder" Property="Background" Value="{DynamicResource M3SurfaceContainerBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="IconBorder" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Outer shadow layer -->
+    <Border Margin="14">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="28" ShadowDepth="6" Direction="270" Color="#000000" Opacity="0.35"/>
+        </Border.Effect>
+
+        <!-- Main Window Surface: Pure Material You card matching SettingsWindow (CornerRadius 24) -->
+        <Border x:Name="MainWindowBorder" CornerRadius="24" Background="{DynamicResource M3SurfaceBrush}" BorderThickness="1.2" BorderBrush="{DynamicResource M3SurfaceContainerBrush}">
+            <Grid Margin="22,18,22,18">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Header -->
+                    <RowDefinition Height="*"/>    <!-- Log details Box -->
+                    <RowDefinition Height="Auto"/> <!-- Status / feedback bar -->
+                    <RowDefinition Height="Auto"/> <!-- Actions footer -->
+                </Grid.RowDefinitions>
+
+                <!-- Header: Draggable -->
+                <Grid Grid.Row="0" Margin="0,0,0,14" Background="Transparent" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Dynamic Shape Badge with selected folder shape & accent color -->
+                    <Grid Grid.Column="0" Width="44" Height="44" Margin="0,0,14,0" VerticalAlignment="Center">
+                        <Path x:Name="CrashShapeBadgePath" Data="{StaticResource GeomSquircle}" Stretch="Uniform" Fill="{DynamicResource M3SurfaceContainerBrush}"/>
+                        <TextBlock Text="⚠️" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Title & Subtitle -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Name="CrashTitleText" Text="Panak - Սխալի մասին հաղորդում" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource M3OnSurfaceBrush}"/>
+                        <TextBlock x:Name="CrashSubtitleText" Text="Ծրագրի աշխատանքի ընթացքում տեղի է ունեցել անսպասելի սխալ: Կարող եք ուղարկել լոգը մշակողին՝ խնդիրը շտկելու համար:" 
+                                   FontSize="11.5" Foreground="{DynamicResource M3OnSurfaceVariantBrush}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                    </StackPanel>
+
+                    <!-- Close Window Button -->
+                    <Button Grid.Column="2" Style="{StaticResource M3IconCloseButtonStyle}" Content="✕" VerticalAlignment="Top" Click="CloseBtn_Click" ToolTip="Փակել / Close"/>
+                </Grid>
+
+                <!-- Error Log Details Card matching M3CardBrush -->
+                <Border Grid.Row="1" Background="{DynamicResource M3CardBrush}" CornerRadius="16" BorderBrush="{DynamicResource M3SurfaceContainerBrush}" BorderThickness="1" Padding="8">
+                    <TextBox x:Name="ErrorDetailsBox"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Auto"
+                             Background="Transparent"
+                             Foreground="{DynamicResource M3OnSurfaceBrush}"
+                             BorderThickness="0"
+                             FontFamily="Consolas, 'Cascadia Code', Courier New, monospace"
+                             FontSize="11"
+                             Padding="6"
+                             SelectionBrush="{DynamicResource M3PrimaryBrush}"/>
+                </Border>
+
+                <!-- Feedback / Status label -->
+                <TextBlock Grid.Row="2" x:Name="StatusMessageText" 
+                           Foreground="{DynamicResource M3PrimaryBrush}" 
+                           FontSize="11.5" 
+                           FontWeight="Medium" 
+                           HorizontalAlignment="Left" 
+                           Margin="4,8,4,4" 
+                           Visibility="Collapsed" 
+                           Text="✓ Պատճենված է սեղմատախտակին (Copied to clipboard)"/>
+
+                <!-- Action Buttons Footer -->
+                <Grid Grid.Row="3" Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left side: Copy & Open Log file -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Button x:Name="CopyBtn" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="CopyBtn_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📋 " FontSize="12"/>
+                                <TextBlock x:Name="CopyBtnText" Text="Պատճենել"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="OpenLogFileBtn" Style="{StaticResource SecondaryButtonStyle}" Click="OpenLogFileBtn_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📄 " FontSize="12"/>
+                                <TextBlock x:Name="OpenLogBtnText" Text="Բացել ֆայլը"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Right side: Restart & Email -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button x:Name="RestartBtn" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="RestartBtn_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🔄 " FontSize="12"/>
+                                <TextBlock x:Name="RestartBtnText" Text="Վերագործարկել"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="SendEmailBtn" Style="{StaticResource ActionButtonStyle}" Click="SendEmailBtn_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="✉️ " FontSize="13"/>
+                                <TextBlock x:Name="SendEmailBtnText" Text="Ուղարկել նամակ" Margin="2,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+    </Border>
+</Window>

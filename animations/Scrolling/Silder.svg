@@ -1,0 +1,106 @@
+<svg width="168" height="149" viewBox="0 0 168 149" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+svg { overflow: visible; }
+@keyframes kf_Frame_394_2_transform_0 {
+  0% {
+    transform: translateX(4px) translateX(0px) translateY(0px);
+  }
+  18.75% {
+    transform: translateX(4px) translateX(0px) translateY(0px);
+  }
+  81.25% {
+    transform: translateX(4px) translateX(-82px) translateY(0px);
+  }
+  100% {
+    transform: translateX(4px) translateX(-82px) translateY(0px);
+  }
+}
+#Frame_394_2 {
+  transform-origin: 0 0;
+  animation: kf_Frame_394_2_transform_0 1.6s linear infinite;
+}
+@keyframes kf_Rectangle_283_fill_0 {
+  0% {
+    fill: #504949;
+  }
+  18.75% {
+    animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    fill: #504949;
+  }
+  81.25% {
+    fill: #706A6A;
+  }
+  100% {
+    fill: #706A6A;
+  }
+}
+#Rectangle_283 {
+  animation: kf_Rectangle_283_fill_0 1.6s linear infinite;
+}
+@keyframes kf_Rectangle_284_fill_0 {
+  0% {
+    fill: #706A6A;
+  }
+  100% {
+    fill: #706A6A;
+  }
+}
+#Rectangle_284 {
+  animation: kf_Rectangle_284_fill_0 1.6s linear infinite;
+}
+</style>
+<g id="Group_394">
+<rect id="Rectangle_282" width="168" height="149" fill="#F8F8F8"/>
+<g id="Group_396" transform="translate(34 20)">
+<rect id="Rectangle_261" width="99" height="108" rx="9" fill="#D9D9D9"/>
+<g id="Frame_394" clip-path="url(#clip0_274_108)" transform="translate(11 23)">
+<g id="Frame_394_2" transform="translate(4)">
+<g id="Frame_397">
+<rect id="Rectangle_263" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_264" transform="translate(26.6667)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_265" transform="translate(53.3333)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_266" transform="translate(0 26.3333)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_267" transform="translate(26.6667 26.3333)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_268" transform="translate(53.3333 26.3333)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_269" transform="translate(0 52.6667)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_270" transform="translate(26.6667 52.6667)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_271" transform="translate(53.3333 52.6667)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+</g>
+<g id="Frame_398" transform="translate(82)">
+<rect id="Rectangle_263_2" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_264_2" transform="translate(26.6667)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_265_2" transform="translate(53.3333)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_266_2" transform="translate(0 26.3333)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+<rect id="Rectangle_267_2" transform="translate(26.6667 26.3333)" width="18.6667" height="19.3333" rx="3" fill="#B4B4B4"/>
+</g>
+</g>
+</g>
+<g id="Frame_394_3" transform="translate(10 7)">
+<rect id="Rectangle_278" transform="translate(0 1)" width="37" height="6" rx="2" fill="#8D8D8D"/>
+<g id="Group_395" transform="translate(51)">
+<rect id="Rectangle_279" transform="translate(22)" width="8" height="8" rx="4" fill="#8D8D8D"/>
+<rect id="Rectangle_280" transform="translate(11)" width="8" height="8" rx="4" fill="#8D8D8D"/>
+<rect id="Rectangle_281" width="8" height="8" rx="4" fill="#8D8D8D"/>
+</g>
+</g>
+</g>
+<g id="Group_397" transform="translate(73 119)">
+<animate attributeName="width" values="22; 22; 24; 24" keyTimes="0; 0.1875; 0.8125; 1" dur="1.6s" calcMode="linear" repeatCount="indefinite" />
+<rect id="Rectangle_283" transform="translate(5 1)" width="9" height="3" rx="2" fill="#504949">
+<animate attributeName="width" values="9; 9; 3; 3" keyTimes="0; 0.1875; 0.8125; 1" dur="1.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_284" transform="translate(15 1)" width="3" height="3" rx="2" fill="#706A6A">
+<animate attributeName="width" values="3; 3; 9; 9" keyTimes="0; 0.1875; 0.8125; 1" dur="1.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<path id="Vector_255" transform="translate(20)" d="M0 0L2 2.5L0 5" stroke="#504949" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_256" transform="matrix(-1 0 0 -1 2 5)" d="M0 0L2 2.5L0 5" stroke="#504949" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_274_108">
+<rect width="80" height="74" fill="white"/>
+</clipPath>
+</defs>
+</svg>

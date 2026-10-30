@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "comment": "Configure your Microsoft Partner Center details here before building the Store MSIX package.",
+  "Identity": {
+    "Name": "HrantHakobyan.Panak",
+    "Publisher": "CN=YOUR-PUBLISHER-ID-FROM-PARTNER-CENTER",
+    "PublisherDisplayName": "Hrant Hakobyan",
+    "ProcessorArchitecture": "x64"
+  },
+  "Application": {
+    "Id": "Panak",
+    "DisplayName": "Panak",
+    "Description": "Panak - Android-Style Popup Folders and Widgets for Windows",
+    "TileShortName": "Panak",
+    "BackgroundColor": "transparent"
+  },
+  "Publishing": {
+    "AutoSyncVersionFromCsproj": true,
+    "TargetDeviceFamily": "Windows.Desktop",
+    "MinVersion": "10.0.17763.0",
+    "MaxVersionTested": "10.0.26100.0"
+  }
+}

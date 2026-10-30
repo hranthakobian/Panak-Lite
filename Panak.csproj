@@ -1,0 +1,101 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RootNamespace>Panak</RootNamespace>
+    <AssemblyName>Panak</AssemblyName>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <ApplicationIcon>Panak.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+    <InternalsVisibleTo Include="Panak.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="src\Logo.png" Link="Logo.png" />
+    <Resource Include="src\Setup.png" Link="Setup.png" />
+    <Resource Include="src\PanakLogo.png" Link="PanakLogo.png" />
+    <Resource Include="src\SettingsLogo.png" Link="SettingsLogo.png" />
+    <Resource Include="src\PanakSetupLogo.png" Link="PanakSetupLogo.png" />
+    <Resource Include="src\Panak logo.png" Link="PanakLogoLinked.png" />
+    <Resource Include="src\Frame 121.png" Link="Frame 121.png" />
+    <Resource Include="src\Group 389.png" Link="Group 389.png" />
+    <Resource Include="Panak.ico" />
+    <None Include="src\Logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\Setup.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\SettingsLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\PanakLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\PanakSetupLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\Panak setup logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\Panak logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\Frame 121.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\Group 389.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Resource Include="svg\settings.svg" Link="settings.svg" />
+    <Resource Include="src\settings.svg" />
+    <None Include="svg\settings.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="src\settings.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Panak.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Tests\**" />
+    <None Remove="Tests\**" />
+    <Compile Remove="Setup\**" />
+    <Page Remove="Setup\**" />
+    <None Remove="Setup\**" />
+    <Compile Remove="Panak.ShellExt\**" />
+    <EmbeddedResource Remove="Panak.ShellExt\**" />
+    <None Remove="Panak.ShellExt\**" />
+    <Page Remove="Panak.ShellExt\**" />
+    <Compile Remove="Uninstall\**" />
+    <Page Remove="Uninstall\**" />
+    <None Remove="Uninstall\**" />
+  </ItemGroup>
+
+  <Target Name="CopyShellExtFiles" AfterTargets="Build;Publish">
+    <ItemGroup>
+      <ShellExtBinFiles Include="Panak.ShellExt\bin\$(Configuration)\net8.0-windows\Panak.ShellExt.comhost.dll" />
+      <ShellExtBinFiles Include="Panak.ShellExt\bin\$(Configuration)\net8.0-windows\Panak.ShellExt.dll" />
+      <ShellExtBinFiles Include="Panak.ShellExt\bin\$(Configuration)\net8.0-windows\Panak.ShellExt.deps.json" />
+      <ShellExtBinFiles Include="Panak.ShellExt\bin\$(Configuration)\net8.0-windows\Panak.ShellExt.runtimeconfig.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ShellExtBinFiles)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" Condition="Exists('%(FullPath)')" />
+    <Copy SourceFiles="@(ShellExtBinFiles)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" Condition="'$(PublishDir)' != '' and Exists('%(FullPath)')" />
+  </Target>
+
+</Project>

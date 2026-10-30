@@ -1,0 +1,80 @@
+# ==========================================
+# Build & Publishing Outputs
+# ==========================================
+bin/
+obj/
+publish/
+staging_panak/
+staging_zip/
+[Bb]in/
+[Oo]bj/
+Setup/PanakPayload.zip
+
+# ==========================================
+# Packages & Archives
+# ==========================================
+*.zip
+*.tar.gz
+*.7z
+*.rar
+*.nupkg
+*.snupkg
+
+# ==========================================
+# Visual Studio / IDE Caches & Settings
+# ==========================================
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.dbmdl
+
+# ==========================================
+# Test Results & Logs
+# ==========================================
+[Tt]est[Rr]esults/
+*.log
+*.trx
+*.coverage
+*.coveragexml
+stdout.txt
+stderr.txt
+exitcode.txt
+
+# ==========================================
+# Temporary & OS Junk Files
+# ==========================================
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+Thumbs.db
+[Dd]esktop.ini
+
+# ==========================================
+# Images & Media (Loose images / design assets)
+# ==========================================
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.bmp
+*.gif
+*.webp
+*.psd
+*.ai
+
+# Whitelist required application resources & icons:
+!PanakLogo.png
+!PanakSetupLogo.png
+!Panak logo.png
+!Panak setup logo.png
+!SettingsLogo.png
+!Panak.ico
+!Setup/Panak.ico

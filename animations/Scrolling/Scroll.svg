@@ -1,0 +1,268 @@
+<svg width="168" height="149" viewBox="0 0 168 149" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+svg { overflow: visible; }
+@keyframes kf_Rectangle_264_transform_0 {
+  0% {
+    transform: translateX(27px) translateX(1px);
+  }
+  11.54% {
+    transform: translateX(27px) translateX(1px);
+  }
+  88.46% {
+    transform: translateX(27px) translateX(1px);
+  }
+  100% {
+    transform: translateX(27px) translateX(1px);
+  }
+}
+#Rectangle_264 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_264_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_265_transform_0 {
+  0% {
+    transform: translateX(54px) translateX(2px);
+  }
+  11.54% {
+    transform: translateX(54px) translateX(2px);
+  }
+  88.46% {
+    transform: translateX(54px) translateX(2px);
+  }
+  100% {
+    transform: translateX(54px) translateX(2px);
+  }
+}
+#Rectangle_265 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_265_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_267_transform_0 {
+  0% {
+    transform: translateX(27px) translateY(24px) translateX(1px);
+  }
+  11.54% {
+    transform: translateX(27px) translateY(24px) translateX(1px);
+  }
+  88.46% {
+    transform: translateX(27px) translateY(24px) translateX(1px);
+  }
+  100% {
+    transform: translateX(27px) translateY(24px) translateX(1px);
+  }
+}
+#Rectangle_267 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_267_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_268_transform_0 {
+  0% {
+    transform: translateX(54px) translateY(24px) translateX(2px);
+  }
+  11.54% {
+    transform: translateX(54px) translateY(24px) translateX(2px);
+  }
+  88.46% {
+    transform: translateX(54px) translateY(24px) translateX(2px);
+  }
+  100% {
+    transform: translateX(54px) translateY(24px) translateX(2px);
+  }
+}
+#Rectangle_268 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_268_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_270_transform_0 {
+  0% {
+    transform: translateX(27px) translateY(48px) translateX(1px);
+  }
+  11.54% {
+    transform: translateX(27px) translateY(48px) translateX(1px);
+  }
+  88.46% {
+    transform: translateX(27px) translateY(48px) translateX(1px);
+  }
+  100% {
+    transform: translateX(27px) translateY(48px) translateX(1px);
+  }
+}
+#Rectangle_270 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_270_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_271_transform_0 {
+  0% {
+    transform: translateX(54px) translateY(48px) translateX(2px);
+  }
+  11.54% {
+    transform: translateX(54px) translateY(48px) translateX(2px);
+  }
+  88.46% {
+    transform: translateX(54px) translateY(48px) translateX(2px);
+  }
+  100% {
+    transform: translateX(54px) translateY(48px) translateX(2px);
+  }
+}
+#Rectangle_271 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_271_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_273_transform_0 {
+  0% {
+    transform: translateX(27px) translateY(72px) translateX(1px);
+  }
+  11.54% {
+    transform: translateX(27px) translateY(72px) translateX(1px);
+  }
+  88.46% {
+    transform: translateX(27px) translateY(72px) translateX(1px);
+  }
+  100% {
+    transform: translateX(27px) translateY(72px) translateX(1px);
+  }
+}
+#Rectangle_273 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_273_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_274_transform_0 {
+  0% {
+    transform: translateX(54px) translateY(72px) translateX(2px);
+  }
+  11.54% {
+    transform: translateX(54px) translateY(72px) translateX(2px);
+  }
+  88.46% {
+    transform: translateX(54px) translateY(72px) translateX(2px);
+  }
+  100% {
+    transform: translateX(54px) translateY(72px) translateX(2px);
+  }
+}
+#Rectangle_274 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_274_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_276_transform_0 {
+  0% {
+    transform: translateX(27px) translateY(96px) translateX(1px);
+  }
+  11.54% {
+    transform: translateX(27px) translateY(96px) translateX(1px);
+  }
+  88.46% {
+    transform: translateX(27px) translateY(96px) translateX(1px);
+  }
+  100% {
+    transform: translateX(27px) translateY(96px) translateX(1px);
+  }
+}
+#Rectangle_276 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_276_transform_0 2.6s linear infinite;
+}
+@keyframes kf_Rectangle_262_transform_0 {
+  0% {
+    transform: translateX(88px) translateY(20px) translateX(0px) translateY(0px);
+  }
+  11.54% {
+    transform: translateX(88px) translateY(20px) translateX(0px) translateY(0px);
+  }
+  88.46% {
+    transform: translateX(88px) translateY(20px) translateX(0.001px) translateY(59px);
+  }
+  100% {
+    transform: translateX(88px) translateY(20px) translateX(0.001px) translateY(59px);
+  }
+}
+#Rectangle_262 {
+  transform-origin: 0 0;
+  animation: kf_Rectangle_262_transform_0 2.6s linear infinite;
+}
+</style>
+<g id="Group_393">
+<rect id="Rectangle_282" width="168" height="149" fill="#F8F8F8"/>
+<g id="Group_396" transform="translate(34 20)">
+<rect id="Rectangle_261" width="99" height="108" rx="9" fill="#D9D9D9"/>
+<g id="Frame_394" clip-path="url(#clip0_274_168)" transform="translate(10 23)">
+<animate attributeName="height" values="74.667; 74.667; 74.667; 74.667" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+<animate attributeName="width" values="75; 75; 75; 75" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+<g id="Frame_394_2">
+<animate attributeName="width" values="75; 75; 75; 75" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+<rect id="Rectangle_263" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_264" transform="translate(27)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_265" transform="translate(54)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_266" transform="translate(0 24)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_267" transform="translate(27 24)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_268" transform="translate(54 24)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_269" transform="translate(0 48)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_270" transform="translate(27 48)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_271" transform="translate(54 48)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_272" transform="translate(0 72)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_273" transform="translate(27 72)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_274" transform="translate(54 72)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_275" transform="translate(0 96)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+<rect id="Rectangle_276" transform="translate(27 96)" width="18" height="18" rx="3" fill="#B4B4B4">
+<animate attributeName="width" values="19; 19; 19; 19" keyTimes="0; 0.1154; 0.8846; 1" dur="2.6s" calcMode="linear" repeatCount="indefinite" />
+
+</rect>
+</g>
+</g>
+<rect id="Rectangle_262" transform="translate(88 20)" width="4" height="22.4848" rx="9" fill="#848484"/>
+<g id="Frame_394_3" transform="translate(10 7)">
+<rect id="Rectangle_278" transform="translate(0 1)" width="37" height="6" rx="2" fill="#8D8D8D"/>
+<g id="Group_395" transform="translate(51)">
+<rect id="Rectangle_279" transform="translate(22)" width="8" height="8" rx="4" fill="#8D8D8D"/>
+<rect id="Rectangle_280" transform="translate(11)" width="8" height="8" rx="4" fill="#8D8D8D"/>
+<rect id="Rectangle_281" width="8" height="8" rx="4" fill="#8D8D8D"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_274_168">
+<rect width="72" height="70.6667" fill="white"/>
+</clipPath>
+</defs>
+</svg>

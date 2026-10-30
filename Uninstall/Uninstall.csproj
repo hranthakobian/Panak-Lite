@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationManifest>..\app.manifest</ApplicationManifest>
+    <RootNamespace>Panak.Uninstall</RootNamespace>
+    <AssemblyName>Uninstall</AssemblyName>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <ApplicationIcon>Uninstall.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="..\src\Uninstaller.png" Link="Uninstaller.png" />
+    <Resource Include="Uninstall.ico" />
+    <EmbeddedResource Include="..\src\Uninstaller.png" Link="UninstallerEmbedded.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Services\LocalizationService.cs" Link="Services\LocalizationService.cs" />
+    <Compile Include="..\Services\CrowdinOtaService.cs" Link="Services\CrowdinOtaService.cs" />
+    <Compile Include="..\Services\ContextMenuRegistry.cs" Link="Services\ContextMenuRegistry.cs" />
+    <Compile Include="..\Services\ShellHelper.cs" Link="Services\ShellHelper.cs" />
+    <Compile Include="..\Services\FolderLockService.cs" Link="Services\FolderLockService.cs" />
+    <Compile Include="..\Controls\WavyProgressBar.cs" Link="Controls\WavyProgressBar.cs" />
+  </ItemGroup>
+
+</Project>

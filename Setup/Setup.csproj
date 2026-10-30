@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationManifest>..\app.manifest</ApplicationManifest>
+    <RootNamespace>Panak.Setup</RootNamespace>
+    <AssemblyName>Setup</AssemblyName>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <ApplicationIcon>Panak.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="..\src\Setup.png" Link="Setup.png" />
+    <Resource Include="..\src\PanakSetupLogo.png" Link="PanakSetupLogo.png" />
+    <Resource Include="Panak.ico" />
+    <EmbeddedResource Include="..\src\Setup.png" Link="SetupEmbedded.png" />
+    <EmbeddedResource Include="..\src\PanakSetupLogo.png" Link="PanakSetupLogoEmbedded.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Services\LocalizationService.cs" Link="Services\LocalizationService.cs" />
+    <Compile Include="..\Services\CrowdinOtaService.cs" Link="Services\CrowdinOtaService.cs" />
+    <Compile Include="..\Services\ContextMenuRegistry.cs" Link="Services\ContextMenuRegistry.cs" />
+    <Compile Include="..\Services\ShellHelper.cs" Link="Services\ShellHelper.cs" />
+    <Compile Include="..\Controls\WavyProgressBar.cs" Link="Controls\WavyProgressBar.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Embed the payload zip if it exists -->
+    <EmbeddedResource Include="PanakPayload.zip" Condition="Exists('PanakPayload.zip')" />
+  </ItemGroup>
+
+</Project>
